@@ -51,25 +51,37 @@ export default route({ methods: ["POST"], access: "public" }, async (req, res) =
     if (!key) errors.form = "Please reload the page and try again.";
     if (Object.keys(errors).length) return send(res, 400, { error: "Please check the highlighted fields.", fields: errors });
 
-    // The store must exist and be active (the foreign key is the final guard).
-    const st = await sb(`croma_stores?select=store_id&store_id=eq.${encodeURIComponent(values.storeId)}&is_active=eq.true`);
+    const phone = `+91${values.phone}`;
+    const hash = ipHash(req);
+    const since = new Date(Date.now() - 3600 * 1000).toISOString();
+    const dupSince = new Date(Date.now() - DUPLICATE_WINDOW_MS).toISOString();
+
+    // The four checks below only read, and none depends on another, so they run at the same time
+    // (one network round trip instead of four in a row). Their results are then evaluated in the
+    // original order, so every response is exactly what it was before.
+    const [st, same, recent, dup] = await Promise.all([
+      // The store must exist and be active (the foreign key is the final guard).
+      sb(`croma_stores?select=store_id&store_id=eq.${encodeURIComponent(values.storeId)}&is_active=eq.true`),
+      // Idempotency: a retry / double click carrying the same key is a success, not a second row.
+      sb(`croma_feedback_submissions?select=id&idempotency_key=eq.${key}`),
+      // Rate limit per (salted-hash) IP.
+      sb(`croma_feedback_submissions?select=id&ip_hash=eq.${hash}&created_at=gte.${encodeURIComponent(since)}`, {
+        prefer: "count=exact",
+        range: "0-0",
+      }),
+      // Same person, store and text submitted moments ago from a freshly loaded form: treat as duplicate.
+      sb(
+        `croma_feedback_submissions?select=id&phone_number=eq.${encodeURIComponent(phone)}&store_id=eq.${values.storeId}` +
+          `&personal_feedback=eq.${encodeURIComponent(values.feedback)}&created_at=gte.${encodeURIComponent(dupSince)}`,
+      ),
+    ]);
+
     if (!st.ok) throw new FeedbackUnavailable("store lookup failed");
     if (!st.data?.length) return send(res, 400, { error: "Please check the highlighted fields.", fields: { storeId: "Please pick a store from the list." } });
 
-    const phone = `+91${values.phone}`;
-    const hash = ipHash(req);
-
-    // Idempotency: a retry / double click carrying the same key is a success, not a second row.
-    const same = await sb(`croma_feedback_submissions?select=id&idempotency_key=eq.${key}`);
     if (!same.ok) throw new FeedbackUnavailable("lookup failed");
     if (same.data?.length) return send(res, 200, { ok: true });
 
-    // Rate limit per (salted-hash) IP.
-    const since = new Date(Date.now() - 3600 * 1000).toISOString();
-    const recent = await sb(`croma_feedback_submissions?select=id&ip_hash=eq.${hash}&created_at=gte.${encodeURIComponent(since)}`, {
-      prefer: "count=exact",
-      range: "0-0",
-    });
     if (!recent.ok) throw new FeedbackUnavailable("rate lookup failed");
     const count = Number(recent.headers.get("content-range")?.split("/")[1] || 0);
     if (count >= HOURLY_LIMIT_PER_IP) {
@@ -77,12 +89,6 @@ export default route({ methods: ["POST"], access: "public" }, async (req, res) =
       return send(res, 429, { error: "Too many submissions from this network. Please try again a little later." });
     }
 
-    // Same person, store and text submitted moments ago from a freshly loaded form: treat as duplicate.
-    const dupSince = new Date(Date.now() - DUPLICATE_WINDOW_MS).toISOString();
-    const dup = await sb(
-      `croma_feedback_submissions?select=id&phone_number=eq.${encodeURIComponent(phone)}&store_id=eq.${values.storeId}` +
-        `&personal_feedback=eq.${encodeURIComponent(values.feedback)}&created_at=gte.${encodeURIComponent(dupSince)}`,
-    );
     if (!dup.ok) throw new FeedbackUnavailable("duplicate lookup failed");
     if (dup.data?.length) return send(res, 200, { ok: true });
 

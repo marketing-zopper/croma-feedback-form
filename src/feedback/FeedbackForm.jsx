@@ -72,6 +72,23 @@ export default function FeedbackForm() {
     };
   }, []);
 
+  // Warm the browser cache with the confirmation-page banner once the page has settled, so the
+  // thank-you view appears fully painted the moment the save finishes (instead of the image
+  // starting to download only then). Idle-time and low priority: it never competes with the form.
+  useEffect(() => {
+    const load = () => {
+      const img = new Image();
+      img.decoding = "async";
+      img.src = `${A}/houseful-banner.png`;
+    };
+    if ("requestIdleCallback" in window) {
+      const id = window.requestIdleCallback(load, { timeout: 3000 });
+      return () => window.cancelIdleCallback?.(id);
+    }
+    const t = setTimeout(load, 1500);
+    return () => clearTimeout(t);
+  }, []);
+
   const knownIds = useMemo(() => new Set(stores.map((s) => s.id)), [stores]);
   const { errors: liveErrors } = useMemo(
     () => validateFeedback(values, { isKnownStore: stores.length ? (id) => knownIds.has(id) : undefined }),
@@ -122,7 +139,7 @@ export default function FeedbackForm() {
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.ok) {
         setDone({ rating: values.rating });
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        window.scrollTo({ top: 0, behavior: "instant" }); // no animation: the thank-you view shows at once
       } else if (res.status === 400 && data.fields) {
         setServerErrors(data.fields);
         const f = ORDER.find((k) => data.fields[k]);
