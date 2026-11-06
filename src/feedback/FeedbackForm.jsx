@@ -166,7 +166,7 @@ export default function FeedbackForm() {
             <img className="fb-header__croma" src={`${A}/croma-header.png`} alt="Croma" />
           </header>
 
-          <section className="fb-scene" aria-hidden="false">
+          <section className={`fb-scene${done ? " fb-scene--thanks" : ""}`} aria-hidden="false">
             <img className="fb-scene__croma" src={`${A}/croma-navy.png`} alt="" aria-hidden="true" />
             <DeskCharacter ref={charRef} />
             <p className="fb-bubble" aria-hidden="true">How can we<br />support your<br />store better?</p>
@@ -356,12 +356,24 @@ function FieldError({ id, msg }) {
   );
 }
 
+const GAME_URL = "https://zopper-teen-patti.vercel.app/";
+
+function Arrow() {
+  return (
+    <svg className="fb-thanks__arrow" viewBox="0 0 14 12" aria-hidden="true" focusable="false">
+      <path d="M1 6h12M8 1l5 5-5 5" />
+    </svg>
+  );
+}
+
 function Thanks({ rating, onAgain }) {
   const face = FACES.find((f) => f.v === rating);
   return (
     <section className="fb-form">
       <div className="fb-card fb-thanks" role="status"><div className="fb-card__inner">
-        <div className="fb-thanks__badge" aria-hidden="true">✓</div>
+        <div className="fb-thanks__badge" aria-hidden="true">
+          <svg viewBox="0 0 43.5 43.5" focusable="false"><path d="M12 25.5L18 32.6L29.7 13.6" /></svg>
+        </div>
         <h1 className="fb-card__title">Thank you!</h1>
         <p className="fb-thanks__text">
           Your feedback has been received. We read every note and use it to enhance customer experience.
@@ -371,8 +383,20 @@ function Thanks({ rating, onAgain }) {
             Your rating: <strong>{RATING_LABELS[face.v]}</strong> ({face.v}/5)
           </p>
         )}
-        <button type="button" className="fb-submit fb-submit--inline" onClick={onAgain}>
-          Share more feedback <span aria-hidden="true">→</span>
+        <hr className="fb-thanks__rule" />
+        <img
+          className="fb-thanks__banner"
+          src={`${A}/houseful-banner.png`}
+          width="664"
+          height="340"
+          alt="Zopper presents Houseful. Pick your cards. Play your best hand."
+          draggable="false"
+        />
+        <a className="fb-thanks__cta fb-thanks__cta--primary" href={GAME_URL} target="_blank" rel="noopener noreferrer">
+          Play the Game Now <Arrow />
+        </a>
+        <button type="button" className="fb-thanks__cta fb-thanks__cta--ghost" onClick={onAgain}>
+          Share more feedback <Arrow />
         </button>
       </div></div>
     </section>

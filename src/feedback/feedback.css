@@ -367,17 +367,63 @@
 @keyframes fb-spin { to { transform: rotate(360deg); } }
 
 /* ------------------------------------------------------------------ thanks */
-.fb-thanks { text-align: center; margin-bottom: calc(var(--u) * 60); }
-.fb-thanks .fb-card__inner { padding-bottom: calc(var(--u) * 30); }
-.fb-thanks__badge {
-  width: 64px; height: 64px; margin: 0 auto 14px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--navy); color: #fff; font-size: 34px; font-weight: 800;
-  box-shadow: 0 0 0 4px #fff, 0 0 0 7px var(--cyan);
+/* Confirmation view: the scene is shown without the attendant/desk and the card sits over it. */
+.fb-scene--thanks {
+  background-size: calc(var(--u) * 433.7) auto;
+  background-position: calc(50% - var(--u) * 1.8) calc(var(--u) * -2.5);
 }
-.fb-thanks__text { margin: 12px auto 0; max-width: 30ch; font-size: max(15px, calc(var(--u) * 12)); line-height: 1.5; color: #33405f; }
-.fb-thanks__rating { margin: 14px 0 0; font-size: 14px; color: var(--navy); }
-.fb-submit--inline { margin: 26px auto 0; width: 100%; max-width: 340px; }
+.fb-scene--thanks .fb-char,
+.fb-scene--thanks .fb-bubble,
+.fb-scene--thanks .fb-scene__desk,
+.fb-scene--thanks .fb-scene__patch,
+.fb-scene--thanks .fb-scene__lockup,
+.fb-scene--thanks .fb-scene__sign { display: none; }
+.fb-scene--thanks .fb-scene__croma { left: calc(var(--u) * 151.55); top: calc(var(--u) * 35.2); width: calc(var(--u) * 81); }
+
+.fb-thanks {
+  text-align: center;
+  margin: calc(var(--u) * -182.5) calc(var(--u) * 19.5) calc(var(--u) * 12);
+}
+/* smooth rounded frame (cyan rim, navy rule, white paper) instead of the stepped pixel frame */
+.fb-thanks::before, .fb-thanks::after, .fb-thanks .fb-card__inner { clip-path: none; }
+.fb-thanks::before { inset: calc(var(--u) * -6); border-radius: calc(var(--u) * 16); }
+.fb-thanks::after { inset: calc(var(--u) * -3); border-radius: calc(var(--u) * 13); }
+.fb-thanks .fb-card__inner {
+  padding: calc(var(--u) * 9.5) calc(var(--u) * 10) calc(var(--u) * 12);
+  border-radius: calc(var(--u) * 10);
+}
+.fb-thanks__badge {
+  width: calc(var(--u) * 43.5); height: calc(var(--u) * 43.5);
+  margin: calc(var(--u) * 4.3) auto calc(var(--u) * 9.8);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--navy);
+  box-shadow: 0 0 0 calc(var(--u) * 2.4) #fff, 0 0 0 calc(var(--u) * 4.3) var(--cyan);
+}
+.fb-thanks__badge svg { width: 100%; height: 100%; fill: none; stroke: #fff; stroke-width: 4.8; stroke-linecap: round; stroke-linejoin: round; }
+.fb-thanks .fb-card__title { margin: 0; font-size: max(25px, calc(var(--u) * 26.5)); }
+.fb-thanks__text {
+  margin: calc(var(--u) * 11.1) auto 0; max-width: calc(var(--u) * 220);
+  font-size: max(12px, calc(var(--u) * 12)); line-height: 1.17; color: #33405f;
+}
+.fb-thanks__rating { margin: calc(var(--u) * 10.6) 0 0; font-size: max(12px, calc(var(--u) * 12)); color: var(--navy); }
+.fb-thanks__rule { width: calc(var(--u) * 285); height: 0; margin: calc(var(--u) * 10.8) auto calc(var(--u) * 12.2); border: 0; border-top: 1px solid #aab1c9; }
+.fb-thanks__banner { display: block; width: calc(var(--u) * 330); max-width: 100%; height: auto; margin: 0 auto; user-select: none; -webkit-user-drag: none; }
+.fb-thanks__cta {
+  display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 6);
+  width: calc(var(--u) * 219.5); max-width: 100%; height: max(30px, calc(var(--u) * 32.8));
+  margin: calc(var(--u) * 8) auto 0;
+  border-radius: calc(var(--u) * 4.5);
+  font-family: inherit; font-size: max(12px, calc(var(--u) * 12)); font-weight: 500; line-height: 1;
+  text-decoration: none; cursor: pointer;
+  transition: filter 0.15s, transform 0.1s;
+}
+.fb-thanks__cta--primary { margin-top: calc(var(--u) * 9.7); border: 0; background: #03318f; color: #fff; }
+.fb-thanks__cta--ghost { border: calc(var(--u) * 0.8) solid #03318f; background: #fff; color: #03318f; }
+.fb-thanks__cta:hover { filter: brightness(1.12); }
+.fb-thanks__cta:active { transform: translateY(1px); }
+.fb-thanks__cta:focus-visible { outline: 3px solid #fff; outline-offset: 2px; box-shadow: 0 0 0 6px var(--cyan); }
+.fb-thanks__arrow { width: calc(var(--u) * 12.5); height: auto; min-width: 11px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
 
 @media (prefers-reduced-motion: reduce) {
   .fb-page * { transition: none !important; animation-duration: 0.01ms !important; }
