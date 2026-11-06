@@ -377,7 +377,7 @@ function Thanks({ rating, onAgain }) {
         <h1 className="fb-card__title">Thank you!</h1>
         <p className="fb-thanks__text">
           <strong>High-five! Your feedback is in</strong> <span aria-hidden="true">🙌</span><br />
-          <span className="fb-thanks__sub">Thanks for sharing! Every little suggestion helps us serve better.</span>
+          <span className="fb-thanks__sub">Every little suggestion helps us serve better.</span>
         </p>
         {face && (
           <p className="fb-thanks__rating">
