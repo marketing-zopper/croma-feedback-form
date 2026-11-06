@@ -1,0 +1,22 @@
+/* The only global rules the form inherited from the Master App's src/styles.css
+   (copied unchanged so rendering is identical). Everything else is scoped under .fb-page in feedback.css. */
+:root {
+  --light-blue: #19b4ea;
+  --orange: #ee773d;
+  --dark-blue: #1f4091;
+  --text: #1a2238;
+  --muted: #647089;
+  --line: #e5e9f0;
+  --bg: #fafbfd;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Poppins", system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
