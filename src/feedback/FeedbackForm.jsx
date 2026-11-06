@@ -384,6 +384,7 @@ function Thanks({ rating, onAgain }) {
           </p>
         )}
         <hr className="fb-thanks__rule" />
+        <p className="fb-thanks__tag">Here&rsquo;s a Surprise For You <span aria-hidden="true">🎁</span></p>
         <img
           className="fb-thanks__banner"
           src={`${A}/houseful-banner.png`}
@@ -393,10 +394,13 @@ function Thanks({ rating, onAgain }) {
           draggable="false"
         />
         <a className="fb-thanks__cta fb-thanks__cta--primary" href={GAME_URL} target="_blank" rel="noopener noreferrer">
-          Play the Game Now <Arrow />
+          Try the Game <Arrow />
+        </a>
+        <a className="fb-thanks__cta fb-thanks__cta--primary" href={GAME_URL} target="_blank" rel="noopener noreferrer">
+          Try with Friends <Arrow />
         </a>
         <button type="button" className="fb-thanks__cta fb-thanks__cta--ghost" onClick={onAgain}>
-          Share more feedback <Arrow />
+          Want to share another feedback <Arrow />
         </button>
       </div></div>
     </section>
