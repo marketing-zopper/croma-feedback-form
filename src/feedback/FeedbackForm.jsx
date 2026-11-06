@@ -253,7 +253,7 @@ export default function FeedbackForm() {
                     className={`fb-control fb-textarea${err.feedback ? " is-invalid" : ""}`}
                     name="feedback"
                     rows={6}
-                    placeholder="your thoughts here...."
+                    placeholder="Your thoughts here...."
                     value={values.feedback}
                     onChange={(e) => set("feedback", e.target.value)}
                     onBlur={() => blur("feedback")}
